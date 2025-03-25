@@ -4,10 +4,10 @@
 #include <Arduino.h>
 
 // 定义传感器引脚
-#define SENSOR1_PIN 25
-#define SENSOR2_PIN 26
-#define SENSOR3_PIN 33
-#define SENSOR4_PIN 32
+#define SENSOR1_PIN 33
+#define SENSOR2_PIN 32
+#define SENSOR3_PIN 25
+#define SENSOR4_PIN 26
 
 class TrackingSensor {
 public:

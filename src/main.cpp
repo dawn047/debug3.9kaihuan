@@ -10,23 +10,19 @@
 #include "battery_monitor.h"
 #include "tracking_sensor.h"
 #include "NFCReader.h"
-#include <ESP32Servo.h>
 
 // 超声波配置
-const uint8_t trigPin = 16; // 超声波触发引脚,GPIO16-trig
-const uint8_t echoPin = 4;  // 超声波接收引脚,GPIO4-echo
+const uint8_t trigPin = 23; // 超声波触发引脚,GPIO23-trig
+const uint8_t echoPin = 17;  // 超声波接收引脚,GPIO17-echo
 Ultrasonic ultrasonic(trigPin, echoPin);// 初始化超声波传感器对象
 
-// 硬件配置
-const int SERVO_PIN = 2;  // 舵机信号线接GPIO2
-ServoController myServo(SERVO_PIN);
 
 // OLED配置
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 #define OLED_I2C_ADDR 0x3C
-#define OLED_SDA 21 // OLED的SDA引脚，GPIO21-SDA
-#define OLED_SCL 22 // OLED的SCL引脚，GPIO22-SCL
+#define OLED_SDA 4 // OLED的SDA引脚，GPIO21-SDA
+#define OLED_SCL 16 // OLED的SCL引脚，GPIO22-SCL
 
 // Blinker配置
 char auth[] = "bf090b26587a";   // 设备密钥
@@ -59,8 +55,6 @@ bool ledState = LOW;    // LED状态
 
 // 电机速度设定值
 float setSpeed = 0;
-MotorController motorController; // 声明电机控制对象
-
 
 void dataRead(const String &data) {
     BLINKER_LOG("Received data: ", data);
@@ -192,8 +186,7 @@ void setup() {
     // 初始化电机控制器
     motorController.stop();
     motorController.begin();
-    myServo.begin();
-
+   
     // 初始化LED 
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, LOW);
@@ -299,7 +292,7 @@ void loop()
         Serial.println(nfc.getUID());
         Serial.println();
     }
-
+    
     // 根据传感器状态控制运动
     switch(sensorValue) {
         case 0b0000: // 全部偏离轨道
@@ -316,12 +309,15 @@ void loop()
             break;
         case 0b1111: // 检测到十字路口
         motorController.setSpeedOpenLoop(0, 0);
-            delay(1000);
             break;
-        // 添加更多传感器组合状态...
+        case 0b1110: // 检测到左转
+        motorController.setSpeedOpenLoop(0, 80);
+            break;
+        case 0b0111: // 检测到右转
+        motorController.setSpeedOpenLoop(80, 0);
+            break;
+        // 其他情况   
         default:
         motorController.setSpeedOpenLoop(60, 60);
     }
-
-    delay(50);
 }

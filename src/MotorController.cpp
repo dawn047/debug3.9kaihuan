@@ -1,7 +1,7 @@
 #include "MotorController.h"
 
 // MotorController 类的实现
-MotorController::MotorController() : motorL(13, 12), motorR(14, 27) //GPIO13-AIN1，GPIO12-AIN2，GPIO14-BIN1，GPIO27-BIN2
+MotorController::MotorController() : motorL(12, 13), motorR(27, 14) //GPIO13-AIN1，GPIO12-AIN2，GPIO14-BIN1，GPIO27-BIN2
 //GPIO13控制电机 A 的正转信号,GPIO12控制电机 A 的反转信号
 //GPIO14控制电机 B 的正转信号,GPIO27控制电机 B 的反转信号
 
